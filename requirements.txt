@@ -1,0 +1,7 @@
+streamlit
+moviepy
+patched_yolo_infer
+tifffile
+git+https://github.com/THU-MIG/yolov10.git
+supervision
+huggingface_hub
