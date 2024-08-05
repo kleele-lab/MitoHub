@@ -6,12 +6,12 @@
 
 # MitoHub
 
-**Shreyasvi Natraj**, **Koen Wentinck**, **Prof. Dr. Tatjana Kleele**
+MitoHub is an easy-to-use mitochondrial segmentation and mobility estimation toolbox that uses state-of-the-art YOLOv9e and YOLOv8x models for segmentation and Lukas Kanade Optical flow estimation for mobility quantification using live cell microscopy images. This repository contains source code used for training and validating the neural network-based segmentation as well as information about the methodology used.
 
 ## Installation
 - `git clone https://github.com/kleele-lab/MitoHub && cd MitoHub`
 
-In case if git clone does not download the trained models, please download the trained models using [this link](https://polybox.ethz.ch/index.php/s/W738of2GaPO8gED) and copy them to the `segmentation_models` folder:
+In case if git clone does not download the trained models, please download the trained models using [this link](https://polybox.ethz.ch/index.php/s/54z60KQhTgtWfPv) and copy them to the `segmentation_models` folder:
 - `conda env create -f environment.yaml`
 - `conda activate mitohub`
 - In case if GPU is available, install PyTorch GPU version using `pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118` otherwise just proceed to the next step.
