@@ -439,9 +439,9 @@ import glob
 
 # Download YOLOv8 model
 #yolov8_model_path = "segmentation_models/seg_yolov8x_patches_200e_640_last.pt"
-yolov8_model_path = "segmentation_models/segmentation_model_yolov8x_patches_500_640_last.pt"
+yolov8_model_path = "MitoHub_models/segmentation_models/segmentation_model_yolov8x_patches_500_640_last.pt"
 
-model_names = glob.glob('segmentation_models/*.pt')
+model_names = glob.glob('MitoHub_models/segmentation_models/*.pt')
 
 # arrange an instance segmentation model for test
 st.set_page_config(page_title="Segmentation", page_icon="📈")
