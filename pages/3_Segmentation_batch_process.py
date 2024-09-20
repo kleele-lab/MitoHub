@@ -23,6 +23,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from ultralytics import YOLO
 import shutil
+import gc
 
 class MakeCropsDetectThem:
 
@@ -497,8 +498,6 @@ if st.button("Process Batch"):
         crop_image_out = Image.open(crop_file)
         crop_img_array_out = np.array(crop_image_out)
         # Now do something with the image! For example, let's display it:
-
-        st.write('YOLO-Patch-Based-Inference:')
         
         # Final Results (can be saved to get desired results):
         img_out=result.image
@@ -527,6 +526,6 @@ if st.button("Process Batch"):
         # Convert the file to an opencv image.
         image_out = Image.open(output_file)
         img_array_out = np.array(image_out)
-        # Now do something with the image! For example, let's display it:
-        #shutil.move('*.png', str(output_dir_path)+'_'+str(current_dateTime)+'/.')
+        gc.collect()
+    gc.collect()
     st.write("Files Processed and saved at :"+str(output_dir_path))
