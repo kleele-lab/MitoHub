@@ -65,7 +65,7 @@ The output from the segmentation prediction are saved in `<User Defined Output F
 
 An output visualization for the segmentation can be seen as follows:
 
-![segment_mask_231206_RPE1_TMRe_Torin_13_MMStack_Default_decon](https://github.com/kleele-lab/MitoHub/blob/main/segment_2024_06_25_14_16_06/segment_mask_231206_RPE1_TMRe_Torin_13_MMStack_Default_decon.png)
+![segment_mask_231206_RPE1_TMRe_Torin_13_MMStack_Default_decon](https://github.com/kleele-lab/MitoHub/blob/main/output_samples/segment_2024_06_25_14_16_06/segment_mask_231206_RPE1_TMRe_Torin_13_MMStack_Default_decon.png)
 
 ## Further Training & Other Utilities
 In order to achieve better training and predictions, the models can be further fine-tuned over more dataset. In order to to carry out pre-processing of image files, the scripts in the `utils` can be used. Please find further details on how to use them at `utils/README.md`.
