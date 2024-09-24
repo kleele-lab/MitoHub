@@ -14,6 +14,11 @@ import math
 from datetime import datetime
 import pandas as pd
 import math
+import tifffile as tf
+import numpy as np
+from PIL import Image
+import matplotlib.pyplot as plt
+import gc
 
 def lk_from_image(image):
     global idx, gray1, mask, prev
@@ -62,13 +67,37 @@ def lk_from_image(image):
 
     return output
 
+def tiff_proc(upload_tiff_file):
+    img_path = upload_tiff_file
+    image = tf.imread(img_path)
+    print(image.shape)
+    # let `video` be an array with dimensionality (T, H, W, C)
+    num_frames, height, width = image.shape
+    os.mkdir(os.path.join(str(output_dir_path)+'_'+str(current_dateTime),'frames'))
+    for i in range(0,num_frames):
+        print("Writing Frame "+str(i))
+        image_n = image[i,:,:]
+        imgplot = plt.imshow(image_n, cmap = 'gray')
+        # Selecting the axis-X making the bottom and top axes False. 
+        plt.tick_params(axis='x', which='both', bottom=False, 
+                        top=False, labelbottom=False)         
+        # Selecting the axis-Y making the right and left axes False 
+        plt.tick_params(axis='y', which='both', right=False, 
+                        left=False, labelleft=False) 
+        plt.axis('off')
+        plt.savefig(os.path.join(str(output_dir_path)+'_'+str(current_dateTime),'frames/')+str(i)+'.png', bbox_inches='tight', transparent="True", dpi=435, pad_inches=0)
+        plt.close()
+        plt.cla()
+        plt.clf()
+        gc.collect()
+    os.system("ffmpeg -framerate 20 -i "+os.path.join(str(output_dir_path)+'_'+str(current_dateTime),'frames/')+"%d.png -vcodec libx264 -r 30 "+str(output_dir_path)+'_'+str(current_dateTime)+"/merged_video.mp4")
 
 st.set_page_config(page_title="Mobility Estimation", page_icon="📈")
 st.sidebar.header("Mobility Estimation")
 
 st.title("Estimate Mitochondrial Mobility")
 
-uploaded_file = st.text_input("Enter Video File Path", "")
+uploaded_file = st.text_input("Enter File Path (Video or TIFF)", "")
 max_corner_value = st.number_input("Enter the number of corner points to detect", value=0)
 #input_labels = st.text_input("Please enter the path to input labels","")
 output_dir_path = st.text_input("Enter Output Directory Path", "")
@@ -77,33 +106,33 @@ if st.button("Upload file"):
     new_dateTime = datetime.now()
     current_dateTime = new_dateTime.strftime("%Y_%m_%d_%H_%M_%S")
     os.mkdir(str(output_dir_path)+'_'+str(current_dateTime))
-    #if uploaded_file is not None:    
-    video_file = open(uploaded_file, 'rb')
-    video_bytes = video_file.read()
-    #st.video(video_bytes)
-    print(uploaded_file)
-    #st.video(video_bytes)
+ 
+    if str(uploaded_file).split('.')[-1] == 'tif' :
+        idx = 0
+        tiff_proc(uploaded_file)
+        video_file = os.path.join(str(output_dir_path)+'_'+str(current_dateTime),'merged_video.mp4')
 
-    idx = 0
-    #video_file = "test.mp4"
-    video_file = uploaded_file
-    f = open(str(output_dir_path)+'_'+str(current_dateTime)+'/sparse_csv_'+str(uploaded_file).split('.')[0]+'.csv'
-             , "w+")
+    else:
+        idx = 0
+        video_file = uploaded_file
 
+    f = open(os.path.join(str(output_dir_path)+'_'+str(current_dateTime),'sparse_csv.csv'), "w+")
     clip = VideoFileClip(video_file)
+
     white_clip = clip.fl_image(lk_from_image)
+
     #white_clip.write_videofile("test_lk_output.mp4",audio=False)
     st.write("Running Sparse Optical flow based mobility estimation")
-    white_clip.write_videofile(str(output_dir_path)+'_'+str(current_dateTime)+'/sparse_flow_'+str(uploaded_file), 
-                               codec="libx264")#,audio=False)
+    white_clip.write_videofile(str(output_dir_path)+'_'+str(current_dateTime)+'/sparse_flow.mp4', 
+                               codec="libx264")
     f.close() 
 
-    os.system('ffmpeg -i '+str(output_dir_path)+'_'+str(current_dateTime)+'/sparse_flow_'+str(uploaded_file)+' -vcodec libx264 '+str(output_dir_path)+'_'+str(current_dateTime)+'/optimized_'+str(basename(uploaded_file)))
-    sparse_flow_output = open(str(output_dir_path)+'_'+str(current_dateTime)+'/optimized_'+str(uploaded_file), 'rb')
+    os.system('ffmpeg -i '+str(output_dir_path)+'_'+str(current_dateTime)+'/sparse_flow.mp4 -vcodec libx264 '+str(output_dir_path)+'_'+str(current_dateTime)+'/optimized_sparse_flow.mp4')
+    sparse_flow_output = open(str(output_dir_path)+'_'+str(current_dateTime)+'/optimized_sparse_flow.mp4', 'rb')
     sparse_bytes = sparse_flow_output.read()
     st.video(sparse_bytes)
 
-    df = pd.read_csv(str(output_dir_path)+'_'+str(current_dateTime)+'/sparse_csv_'+str(uploaded_file).split('.')[0]+'.csv', sep = ',', header=None)
+    df = pd.read_csv(str(output_dir_path)+'_'+str(current_dateTime)+'/sparse_csv.csv', sep = ',', header=None)
     df_r = df.iloc[:,4]
     j = 0
     for i in range(1, int(len(df)/5)):
@@ -112,7 +141,7 @@ if st.button("Upload file"):
     df_r = df_r.iloc[1:]
     df_r['Mean Mobility'] = df_r.mean(axis=1)
     print(df_r.head())
-    df_r.to_csv(str(output_dir_path)+'_'+str(current_dateTime)+'/mean_mobility_'+str(uploaded_file).split('.')[0]+'.csv'
+    df_r.to_csv(str(output_dir_path)+'_'+str(current_dateTime)+'/mean_mobility.csv'
                 , index = False)
     st.write("Mean Mobility across frames")
     st.bar_chart(df_r['Mean Mobility'])
