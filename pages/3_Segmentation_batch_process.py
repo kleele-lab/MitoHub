@@ -925,7 +925,7 @@ if st.button("Process Batch"):
             memory_optimize=False
         )
 
-        result = CombineDetections(element_crops, match_metric='IOU', intelligent_sorter=True, sorter_bins=1)
+        result = CombineDetections(element_crops, match_metric='IOU', intelligent_sorter=True, sorter_bins=5)
         crop_file = open(str(output_dir_path)+'_'+str(current_dateTime)+'/patches_'+str(basename(file)),'rb')
         # Convert the file to an opencv image.
         crop_image_out = Image.open(crop_file)
