@@ -739,6 +739,7 @@ def visualize_results(
     # Create a copy of the input image
     labeled_image = img.copy()
     labeled_image_mask = img.copy()
+    hi, wi, ci = img.shape
 
     if random_object_colors:
         random.seed(int(delta_colors))
@@ -785,7 +786,7 @@ def visualize_results(
             
             cv2.drawContours(labeled_image, mask_contours, -1, color, thickness)
             cv2.fillPoly(labeled_image_mask, pts=mask_contours, color=(255,255,255))
-            labeled_image_mask = cv2.threshold(labeled_image_mask, 128, 255, cv2.THRESH_BINARY)[1]        
+            labeled_image_mask = cv2.threshold(labeled_image_mask, 128, 255, cv2.THRESH_BINARY)[1]      
         
         elif segment and len(polygons) > 0:
             if len(polygons[i]) > 0:
@@ -832,6 +833,8 @@ def visualize_results(
         # Display the final image with overlaid masks and labels
         plt.figure(figsize=(8, 8), dpi=dpi)
         labeled_image = cv2.cvtColor(labeled_image, cv2.COLOR_BGR2RGB)
+        labeled_image = cv2.resize(labeled_image, (wi, hi))
+        labeled_image_mask = cv2.resize(labeled_image_mask, (wi, hi))
         plt.imshow(labeled_image)
         if axis_off:
             plt.axis('off')
@@ -842,7 +845,7 @@ def visualize_results(
         plt.imshow(labeled_image_mask)
         plt.savefig(str(output_dir_path)+'_'+str(current_dateTime)+'/mask_'+str(basename(file)), 
                     dpi=500, bbox_inches='tight', pad_inches = 0)
-
+        labeled_image = cv2.resize(labeled_image, img.shape) 
         tifffile.imwrite(str(output_dir_path)+'_'+str(current_dateTime)+'/mask_'+str(basename(file)).split('.')[0]+'.tif', 
                          labeled_image_mask)
 

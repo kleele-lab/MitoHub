@@ -737,6 +737,7 @@ def visualize_results(
     # Create a copy of the input image
     labeled_image = img.copy()
     labeled_image_mask = img.copy()
+    hi, wi, ci = image.shape
 
     if random_object_colors:
         random.seed(int(delta_colors))
@@ -830,6 +831,8 @@ def visualize_results(
         # Display the final image with overlaid masks and labels
         plt.figure(figsize=(8, 8), dpi=dpi)
         labeled_image = cv2.cvtColor(labeled_image, cv2.COLOR_BGR2RGB)
+        labeled_image = cv2.resize(labeled_image, (wi, hi))
+        labeled_image_mask = cv2.resize(labeled_image_mask, (wi, hi))
         plt.imshow(labeled_image)
         if axis_off:
             plt.axis('off')
@@ -862,6 +865,7 @@ def tiff_proc(upload_tiff_file):
                     left=False, labelleft=False) 
     plt.axis('off')
     plt.savefig(os.path.join(str(output_dir_path)+'_'+str(current_dateTime),str(basename(img_path)).split('.')[0]+'_input.png'), bbox_inches='tight', transparent="True", dpi=435, pad_inches=0)
+
     plt.close()
     plt.cla()
     plt.clf()
@@ -926,7 +930,7 @@ if st.button("Upload file"):
         memory_optimize=False,
     )
 
-    result = CombineDetections(element_crops, match_metric='IOU', intelligent_sorter=True, sorter_bins=5)
+    result = CombineDetections(element_crops, match_metric='IOU', intelligent_sorter=True, sorter_bins=1)
     crop_file = open(str(output_dir_path)+'_'+str(current_dateTime)+'/patches_'+str(basename(input_image)),'rb')
     # Convert the file to an opencv image.
     crop_image_out = Image.open(crop_file)
