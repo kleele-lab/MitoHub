@@ -930,7 +930,7 @@ if st.button("Upload file"):
         memory_optimize=False,
     )
 
-    result = CombineDetections(element_crops, match_metric='IOU', intelligent_sorter=True, sorter_bins=1)
+    result = CombineDetections(element_crops, match_metric='IOU', intelligent_sorter=True, sorter_bins=5)
     crop_file = open(str(output_dir_path)+'_'+str(current_dateTime)+'/patches_'+str(basename(input_image)),'rb')
     # Convert the file to an opencv image.
     crop_image_out = Image.open(crop_file)
