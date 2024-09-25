@@ -737,7 +737,7 @@ def visualize_results(
     # Create a copy of the input image
     labeled_image = img.copy()
     labeled_image_mask = img.copy()
-    hi, wi, ci = image.shape
+    hi, wi, ci = img.shape
 
     if random_object_colors:
         random.seed(int(delta_colors))
