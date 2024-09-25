@@ -845,10 +845,31 @@ def visualize_results(
                          labeled_image_mask)
 
 import glob
+import gc
+
+def tiff_proc(upload_tiff_file):
+    img_path = upload_tiff_file
+    image = tifffile.imread(img_path)
+    print(image.shape)
+    # let `video` be an array with dimensionality (T, H, W, C)
+    image_n = image[:,:]
+    imgplot = plt.imshow(image_n, cmap = 'gray')
+    # Selecting the axis-X making the bottom and top axes False. 
+    plt.tick_params(axis='x', which='both', bottom=False, 
+                    top=False, labelbottom=False)         
+    # Selecting the axis-Y making the right and left axes False 
+    plt.tick_params(axis='y', which='both', right=False, 
+                    left=False, labelleft=False) 
+    plt.axis('off')
+    plt.savefig(os.path.join(str(output_dir_path)+'_'+str(current_dateTime),str(basename(img_path)).split('.')[0]+'_input.png'), bbox_inches='tight', transparent="True", dpi=435, pad_inches=0)
+    plt.close()
+    plt.cla()
+    plt.clf()
+    gc.collect()
 
 # Download YOLOv8 model
 #yolov8_model_path = "segmentation_models/seg_yolov8x_patches_200e_640_last.pt"
-yolov8_model_path = "MitoHub_models/segmentation_models/segmentation_model_yolov8x_patches_500_640_last.pt"
+#yolov8_model_path = "MitoHub_models/segmentation_models/segmentation_model_yolov8x_patches_500_640_last.pt"
 
 model_names = glob.glob('MitoHub_models/segmentation_models/*.pt')
 
@@ -875,8 +896,14 @@ if st.button("Upload file"):
     current_dateTime = new_dateTime.strftime("%Y_%m_%d_%H_%M_%S")
     os.mkdir(str(output_dir_path)+'_'+str(current_dateTime))
     # Convert the file to an opencv image.
-    img_path = input_image
-    img = cv2.imread(img_path)
+
+    if str(input_image).split('.')[-1]=="tif":
+        tiff_proc(input_image)
+        img = cv2.imread(os.path.join(str(output_dir_path)+'_'+str(current_dateTime),str(basename(input_image)).split('.')[0]+'_input.png'))
+
+    else:
+        img_path = input_image
+        img = cv2.imread(img_path)
 
     image = Image.open(input_image)
     img_array = np.array(image)
@@ -939,3 +966,6 @@ if st.button("Upload file"):
     # Now do something with the image! For example, let's display it:
     st.image(image_out, channels="BGR")
     #shutil.move('*.png', str(output_dir_path)+'_'+str(current_dateTime)+'/.')
+
+
+    

@@ -847,6 +847,27 @@ def visualize_results(
                          labeled_image_mask)
 
 import glob
+import gc
+
+def tiff_proc(upload_tiff_file):
+    img_path = upload_tiff_file
+    image = tifffile.imread(img_path)
+    print(image.shape)
+    # let `video` be an array with dimensionality (T, H, W, C)
+    image_n = image[:,:]
+    imgplot = plt.imshow(image_n, cmap = 'gray')
+    # Selecting the axis-X making the bottom and top axes False. 
+    plt.tick_params(axis='x', which='both', bottom=False, 
+                    top=False, labelbottom=False)         
+    # Selecting the axis-Y making the right and left axes False 
+    plt.tick_params(axis='y', which='both', right=False, 
+                    left=False, labelleft=False) 
+    plt.axis('off')
+    plt.savefig(os.path.join(str(output_dir_path)+'_'+str(current_dateTime),str(basename(img_path)).split('.')[0]+'_input.png'), bbox_inches='tight', transparent="True", dpi=435, pad_inches=0)
+    plt.close()
+    plt.cla()
+    plt.clf()
+    gc.collect()
 
 # Download YOLOv8 model
 #yolov8_model_path = "segmentation_models/seg_yolov8x_patches_200e_640_last.pt"
@@ -881,11 +902,13 @@ if st.button("Process Batch"):
     for file in files:
         st.write('Processing File '+str(file))
         # Convert the file to an opencv image.
-        img_path = str(file)
-        img = cv2.imread(img_path)
-
-        image = Image.open(file)
-        img_array = np.array(image)
+        if str(file).split('.')[-1]=="tif":
+            img_path = str(file)
+            tiff_proc(img_path)
+            img = cv2.imread(os.path.join(str(output_dir_path)+'_'+str(current_dateTime),str(basename(img_path)).split('.')[0]+'_input.png'))
+        else:
+            img_path = str(file)
+            img = cv2.imread(img_path)
 
         element_crops = MakeCropsDetectThem(
             image=img,
@@ -938,4 +961,4 @@ if st.button("Process Batch"):
         img_array_out = np.array(image_out)
         gc.collect()
     gc.collect()
-    st.write("Files Processed and saved at :"+str(output_dir_path))
+    st.write("Files Processed and saved!")
