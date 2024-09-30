@@ -739,7 +739,7 @@ def visualize_results(
     # Create a copy of the input image
     labeled_image = img.copy()
     labeled_image_mask = img.copy()
-    hi, wi, ci = img.shape
+    #hi, wi, ci = img.shape
 
     if random_object_colors:
         random.seed(int(delta_colors))
@@ -900,19 +900,22 @@ if st.button("Process Batch"):
     new_dateTime = datetime.now()
     current_dateTime = new_dateTime.strftime("%Y_%m_%d_%H_%M_%S")
     os.mkdir(str(output_dir_path)+'_'+str(current_dateTime))
-    
+    log_file = open(str(output_dir_path)+'_'+str(current_dateTime)+"/logs.csv", "w+")
+    log_file.write("Filename, trained_model_name, confidence_threshold, path_height, patch_width, patch_overlap\n")    
     files = glob.glob(os.path.join(input_folder,'*'))
     for file in files:
         st.write('Processing File '+str(file))
         # Convert the file to an opencv image.
         if str(file).split('.')[-1]=="tif":
             img_path = str(file)
+            testimage = tifffile.imread(img_path)
+            hi, wi = testimage.shape
             tiff_proc(img_path)
             img = cv2.imread(os.path.join(str(output_dir_path)+'_'+str(current_dateTime),str(basename(img_path)).split('.')[0]+'_input.png'))
         else:
             img_path = str(file)
             img = cv2.imread(img_path)
-
+            hi, wi, ci = img.shape
         element_crops = MakeCropsDetectThem(
             image=img,
             model_path=yolov8_model_path,
@@ -960,6 +963,10 @@ if st.button("Process Batch"):
         
         output_file = open(str(output_dir_path)+'_'+str(current_dateTime)+'/segment_mask_'+str(basename(file)),'rb')
         # Convert the file to an opencv image.
+        logs_write = str(output_dir_path)+'_'+str(current_dateTime)+'/'+str(basename(file))+', '+str(trained_model)+', '+str(confidence_threshold)+', '+str(patch_height)+', '+str(patch_width)+', '+str(overlap_input)+'\n'
+        log_file.write(logs_write)
+        log_file.close()
+
         image_out = Image.open(output_file)
         img_array_out = np.array(image_out)
         gc.collect()

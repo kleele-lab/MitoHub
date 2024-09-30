@@ -737,7 +737,7 @@ def visualize_results(
     # Create a copy of the input image
     labeled_image = img.copy()
     labeled_image_mask = img.copy()
-    hi, wi, ci = img.shape
+    #hi, wi, ci = img.shape
 
     if random_object_colors:
         random.seed(int(delta_colors))
@@ -899,15 +899,20 @@ if st.button("Upload file"):
     new_dateTime = datetime.now()
     current_dateTime = new_dateTime.strftime("%Y_%m_%d_%H_%M_%S")
     os.mkdir(str(output_dir_path)+'_'+str(current_dateTime))
+    log_file = open(str(output_dir_path)+'_'+str(current_dateTime)+"/logs.csv", "w+")
+    log_file.write("Filename, trained_model_name, confidence_threshold, path_height, patch_width, patch_overlap\n")
     # Convert the file to an opencv image.
 
     if str(input_image).split('.')[-1]=="tif":
+        testimage = tifffile.imread(input_image)
+        hi, wi = testimage.shape
         tiff_proc(input_image)
         img = cv2.imread(os.path.join(str(output_dir_path)+'_'+str(current_dateTime),str(basename(input_image)).split('.')[0]+'_input.png'))
 
     else:
         img_path = input_image
         img = cv2.imread(img_path)
+        hi, wi, ci = img.shape
 
     image = Image.open(input_image)
     img_array = np.array(image)
@@ -963,7 +968,12 @@ if st.button("Upload file"):
         segment=True,
     )
     
+    logs_write = str(output_dir_path)+'_'+str(current_dateTime)+'/'+str(input_image)+', '+str(trained_model)+', '+str(confidence_threshold)+', '+str(patch_height)+', '+str(patch_width)+', '+str(overlap_input)+'\n'
+
     output_file = open(str(output_dir_path)+'_'+str(current_dateTime)+'/segment_mask_'+str(basename(input_image)),'rb')
+    log_file.write(logs_write)
+    log_file.close()
+
     # Convert the file to an opencv image.
     image_out = Image.open(output_file)
     img_array_out = np.array(image_out)
