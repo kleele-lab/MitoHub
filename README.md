@@ -67,6 +67,42 @@ An output visualization for the segmentation can be seen as follows:
 
 ![segment_mask_231206_RPE1_TMRe_Torin_13_MMStack_Default_decon](https://github.com/kleele-lab/MitoHub/blob/main/output_samples/segment_2024_06_25_14_16_06/segment_mask_231206_RPE1_TMRe_Torin_13_MMStack_Default_decon.png)
 
+### Re-Training/Fine-Tuning YOLO Segmentation model
+In order to carry out re-training or finetuning of the yolo segmentation neural network model that is used in MitoHub, the following steps can be carried out:
+- Preprocess the images by converting them into patches using `utils/patchify_run.py` script and changing the path to input masks and image folders.
+- Generate mask labels using `utils/mask_to_labels.py` script by defining the path to the mask folder.
+- Transfer the patches and mask labels `.txt` files to a folder with the following folder structure and put it inside the datasets folder:
+```
+dataset_name/
+    |-- images/
+        |-- train/
+        |   |-- img1.jpg
+        |   |-- img2.jpg
+        |   |-- ...
+        |
+        |-- val/
+        |   |-- img3.jpg
+        |   |-- img4.jpg
+        |   |-- ...
+        |-- ...
+    |-- labels/
+        |-- train/
+        |   |-- mask_img1.txt
+        |   |-- masK_img2.txt
+        |   |-- ...
+        |
+        |-- val/
+        |   |-- mask_img3.txt
+        |   |-- mask_img4.txt
+        |   |-- ...
+        |-- ...
+
+```
+- Add the name of the datasets folder to `utils/dataset_seg.yaml` file.
+- Run `utils/runner_segment_yolo.py` by adding the path to the `dataset_seg.yaml` file and the `model` to be fine-tuned or the `yolo` model to be used for retraining.
+- The output trained model will be saved in `runs/segment/`. 
+- These can then be used for performing inference by simply transfering the `runs/segment/<run_name>/weights/best.pt` or `runs/segment/<run_name>/weights/last.pt` files into the `MitoHub_models/segmentation_models/` folder.
+
 ## Further Training & Other Utilities
 In order to achieve better training and predictions, the models can be further fine-tuned over more dataset. In order to to carry out pre-processing of image files, the scripts in the `utils` can be used. Please find further details on how to use them at `utils/README.md`.
 
