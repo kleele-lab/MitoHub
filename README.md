@@ -51,7 +51,7 @@ The output visualization for mobility estimation can be seen as follows:
 </div>
 
 ## Mitochondrial Segmentation
-In order to carry out Mitochondrial segmentation, we trained a custom [YOLOv8x-segmentation model](https://docs.ultralytics.com/tasks/segment/) achieving a MAP@50 score of 92.4% at 500 epochs. For better training and prediction, we converted large microscopy images into smaller patches and input it to the neural network similar to the approach taken in [this paper](https://arxiv.org/abs/2202.06934). Using this, we are able to achieve finer segmentation over large microscopy image files. This provides us with accurate estimation of mitochondrial area as well as mask to remove non-specific artifacts from the image.
+In order to carry out Mitochondrial segmentation, we trained [YOLOv segmentation model](https://docs.ultralytics.com/tasks/segment/) achieving a MAP@50 score of 93.5% at 100 epochs. For better training and prediction, we converted large microscopy images into smaller patches and input it to the neural network similar to the approach taken in [this paper](https://arxiv.org/abs/2202.06934). Using this, we are able to achieve finer segmentation over large microscopy image files. This provides us with accurate estimation of mitochondrial area as well as mask to remove non-specific artifacts from the image.
 
 Here, the user can define:
 - The confidence threshold at which the segmentation predictions are to be made by the YOLOv8x-segmentation model (Ideally a confidence of 0.1-0.5 is good which represents 10% to 50%).
