@@ -11,13 +11,13 @@ MitoHub is an easy-to-use mitochondrial segmentation and mobility estimation too
 ## Installation
 - `git clone https://github.com/kleele-lab/MitoHub && cd MitoHub`
 
-In case if git clone does not download the trained models, please download the trained models using [this link](https://polybox.ethz.ch/index.php/s/Ap3ROkE4De0055J) and extract the `MitoHub_models.zip` to the `MitoHub_models/segmentation_models` folder:
+In case if git clone does not download the trained models, please download the trained models using [this link]([https://polybox.ethz.ch/index.php/s/pEKBBxi2RlWDIUT) and extract the `MitoHub_models.zip` to the `MitoHub_models/segmentation_models` folder:
 - `conda env create -f environment.yaml`
 - `conda activate mitohub`
 - In case if GPU is available, install PyTorch GPU version using `pip install torch==2.1.0 torchvision==0.16.0 torchaudio==2.1.0 --index-url https://download.pytorch.org/whl/cu118` otherwise just proceed to the next step.
 - `pip install --upgrade ultralytics`
 - `pip install -r requirements.txt`
-- `streamlit run Mitochondrial_Mobility_Estimation.py`
+- `streamlit run Mitochondrial_Mobility_Estimation.py`    
 
 ## Usage
 Make sure to copy the image/video inside the cloned `MitoHub folder`.
