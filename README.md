@@ -8,7 +8,7 @@
 
 MitoHub is an easy-to-use mitochondrial segmentation and mobility estimation toolbox that uses state-of-the-art YOLOv9e and YOLOv8x models for segmentation and Lukas Kanade Optical flow estimation for mobility quantification using live cell microscopy images. This repository contains source code used for training and validating the neural network-based segmentation as well as information about the methodology used.
 
-Report for the project can be checked [Here](https://github.com/kleele-lab/MitoHub/blob/main/MitoHub_report.pdf)
+Report for the project can be checked [Here]([https://github.com/kleele-lab/MitoHub/blob/main/MitoHub_report.pdf](https://github.com/kleele-lab/MitoHub/blob/c6ca117277afdef69fa1914209302fcaa41a383a/MitoHub_report.pdf))
 
 ## Installation
 - `git clone https://github.com/kleele-lab/MitoHub && cd MitoHub`
